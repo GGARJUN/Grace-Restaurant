@@ -1,0 +1,443 @@
+/* ============================================================
+   Grace Restaurant — Onam Sadhya Booking
+   Design tokens
+
+   Palette drawn from the kasavu mundu (the gold-bordered cream
+   cloth worn during Onam) and the banana leaf the Sadhya is
+   served on: cream cloth, a woven gold border, deep maroon
+   temple accents, and banana-leaf green.
+   ============================================================ */
+
+:root {
+  --cream:        #FBF6EA;   /* kasavu cloth */
+  --cream-deep:   #F2E9D6;
+  --ink:          #241F1A;   /* warm near-black */
+  --ink-soft:     #5A5148;
+  --maroon:       #7A1F2B;   /* temple / pallu accent */
+  --maroon-deep:  #5E1620;
+  --gold:         #B8860B;   /* kasavu woven border */
+  --gold-soft:    #D9B75C;
+  --leaf:         #2F4B3C;   /* banana leaf */
+  --leaf-deep:    #1F3529;
+  --leaf-soft:    #E4ECE2;
+
+  --radius-card: 18px;
+  --radius-control: 10px;
+
+  --font-display: "Fraunces", "Iowan Old Style", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --shadow-card: 0 1px 2px rgba(36, 31, 26, 0.04), 0 8px 24px rgba(36, 31, 26, 0.06);
+  --shadow-lift: 0 4px 10px rgba(36, 31, 26, 0.08), 0 16px 40px rgba(36, 31, 26, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select { font-family: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--maroon);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------- Signature element: the kasavu border ----------
+   A woven-triangle gold border, the visual signature of the
+   kasavu mundu, used as a deliberate top accent rather than a
+   generic gradient bar. */
+.kasavu-border {
+  height: 10px;
+  width: 100%;
+  background-color: var(--maroon);
+  background-image:
+    linear-gradient(135deg, var(--gold) 25%, transparent 25%),
+    linear-gradient(225deg, var(--gold) 25%, transparent 25%);
+  background-position: 0 0;
+  background-size: 14px 10px;
+  background-repeat: repeat-x;
+}
+
+/* ---------- Layout shell ---------- */
+.app-shell { min-height: 100%; display: flex; flex-direction: column; }
+
+.app-header { padding: 28px 24px 8px; text-align: center; }
+
+.app-header__mark {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.app-header__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 28px;
+  color: var(--maroon-deep);
+  margin: 4px 0 2px;
+}
+
+.app-header__subtitle { font-size: 14px; color: var(--ink-soft); }
+
+.app-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px 48px;
+}
+
+.step-card {
+  width: 100%;
+  max-width: 560px;
+  background: #fff;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 28px 24px 24px;
+  border: 1px solid var(--cream-deep);
+}
+
+/* ---------- Progress trail: banana-leaf fold tabs, not dots ---------- */
+.trail {
+  display: flex;
+  gap: 6px;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto 14px;
+  padding: 0 24px;
+}
+
+.trail__fold {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--cream-deep);
+  position: relative;
+  overflow: hidden;
+}
+
+.trail__fold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--leaf);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 320ms ease;
+}
+
+.trail__fold.is-done::after,
+.trail__fold.is-active::after { transform: scaleX(1); }
+
+.trail__fold.is-active::after { background: var(--gold); }
+
+/* ---------- Choice cards (date / outlet / type) ---------- */
+.choice-grid { display: grid; gap: 12px; }
+
+.choice-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: var(--radius-control);
+  border: 1.5px solid var(--cream-deep);
+  background: var(--cream);
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.choice-card:hover { border-color: var(--gold-soft); transform: translateY(-1px); }
+
+.choice-card.is-selected {
+  border-color: var(--maroon);
+  background: #fff;
+  box-shadow: var(--shadow-lift);
+}
+
+.choice-card__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.choice-card__meta { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+
+.choice-card__glyph { font-size: 22px; line-height: 1; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: var(--radius-control);
+  padding: 13px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, opacity 150ms ease;
+}
+
+.btn-primary { width: 100%; background: var(--maroon); color: var(--cream); }
+.btn-primary:hover { background: var(--maroon-deep); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-ghost { background: transparent; color: var(--maroon); padding: 8px 4px; }
+
+/* ---------- Form elements ---------- */
+.field { margin-bottom: 18px; }
+
+.field__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.field__hint { font-size: 12px; color: var(--ink-soft); margin-top: 6px; }
+
+.field__input, .field__select, .field__textarea {
+  width: 100%;
+  border: 1.5px solid var(--cream-deep);
+  border-radius: var(--radius-control);
+  padding: 11px 13px;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--cream);
+}
+
+.field__textarea { resize: vertical; min-height: 64px; }
+
+/* ---------- Address autocomplete (Google Maps-style dropdown) ---------- */
+.address-autocomplete {
+  position: relative;
+}
+
+.address-autocomplete__input-wrap {
+  position: relative;
+}
+
+.address-autocomplete__spinner {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--cream-deep);
+  border-top-color: var(--maroon);
+  border-radius: 50%;
+  animation: address-autocomplete-spin 700ms linear infinite;
+}
+
+@keyframes address-autocomplete-spin {
+  to { transform: rotate(360deg); }
+}
+
+.address-autocomplete__dropdown {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--cream);
+  border: 1.5px solid var(--cream-deep);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-lift);
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.address-autocomplete__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.address-autocomplete__item:hover,
+.address-autocomplete__item.is-active {
+  background: var(--cream-deep);
+}
+
+.address-autocomplete__pin {
+  font-size: 15px;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+.address-autocomplete__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.address-autocomplete__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.address-autocomplete__sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  border: 1.5px solid var(--cream-deep);
+  border-radius: var(--radius-control);
+  padding: 6px 8px;
+  background: var(--cream);
+}
+
+.stepper__btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--cream-deep);
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--maroon);
+}
+
+.stepper__value {
+  min-width: 24px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* ---------- Pricing summary ---------- */
+.summary { background: var(--leaf-soft); border-radius: var(--radius-control); padding: 14px 16px; margin: 4px 0 20px; }
+
+.summary__row { display: flex; justify-content: space-between; font-size: 14px; color: var(--ink-soft); padding: 4px 0; }
+
+.summary__row.is-total {
+  border-top: 1px dashed var(--gold-soft);
+  margin-top: 6px;
+  padding-top: 10px;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.summary__row .amount { font-family: var(--font-mono); }
+
+.summary__note { font-size: 12px; color: var(--maroon); margin-top: 6px; }
+
+.back-nav { margin-bottom: 12px; }
+
+/* ---------- Distance calculating: pookalam ring loader ---------- */
+.pookalam-loader {
+  width: 56px;
+  height: 56px;
+  margin: 8px auto;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--cream) 0 6px, transparent 7px),
+    conic-gradient(
+      var(--maroon) 0deg 40deg, var(--gold) 40deg 80deg,
+      var(--leaf) 80deg 120deg, var(--maroon) 120deg 160deg,
+      var(--gold) 160deg 200deg, var(--leaf) 200deg 240deg,
+      var(--maroon) 240deg 280deg, var(--gold) 280deg 320deg,
+      var(--leaf) 320deg 360deg
+    );
+  animation: spin 1.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-row { display: flex; flex-direction: column; align-items: center; padding: 8px 0 4px; }
+
+.loader-row__label { font-size: 13px; color: var(--ink-soft); }
+
+/* ---------- Confirmation "ticket" ---------- */
+.ticket {
+  border-radius: var(--radius-card);
+  background: #fff;
+  border: 1.5px dashed var(--gold-soft);
+  padding: 22px;
+  position: relative;
+}
+
+.ticket__check {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--leaf);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin: 0 auto 12px;
+}
+
+.ticket__id { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); text-align: center; }
+
+.ticket__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--maroon-deep);
+  margin: 2px 0 16px;
+}
+
+.ticket__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--cream-deep);
+}
+
+.ticket__row:last-of-type { border-bottom: none; }
+
+.error-banner {
+  background: #FBE9E7;
+  border: 1px solid var(--maroon);
+  color: var(--maroon-deep);
+  border-radius: var(--radius-control);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}

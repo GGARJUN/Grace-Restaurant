@@ -1,0 +1,71 @@
+import { useBooking } from "../context/BookingContext";
+import QuantityStepper from "./QuantityStepper";
+import { TIME_SLOTS } from "../data/outlets";
+import { SADHYA_PRICE, MAX_TABLE_PARTY_SIZE, tableTotal, formatRupees } from "../lib/pricing";
+
+export default function StepTableDetails() {
+  const { booking, update, goNext, goBack } = useBooking();
+  const total = tableTotal(booking.partySize);
+
+  function handleContinue() {
+    update({ totalAmount: total });
+    goNext();
+  }
+
+  return (
+    <div className="step-card">
+      <div className="back-nav">
+        <button className="btn-ghost" onClick={goBack}>← Back</button>
+      </div>
+      <h2 className="choice-card__title" style={{ fontSize: 20, marginBottom: 16 }}>
+        Table — dine in
+      </h2>
+
+      <div className="field">
+        <label className="field__label">Time slot</label>
+        <select
+          className="field__select"
+          value={booking.timeSlot || ""}
+          onChange={(e) => update({ timeSlot: e.target.value })}
+        >
+          <option value="" disabled>Select a time</option>
+          {TIME_SLOTS.map((slot) => (
+            <option key={slot} value={slot}>{slot}</option>
+          ))}
+        </select>
+        {/* TODO(backend): disable slots that have hit TABLE_SLOT_CAPACITY for this date+outlet */}
+      </div>
+
+      <div className="field">
+        <label className="field__label">Number of people</label>
+        <QuantityStepper
+          value={booking.partySize}
+          onChange={(v) => update({ partySize: v })}
+          max={MAX_TABLE_PARTY_SIZE}
+          unitLabel={`${formatRupees(SADHYA_PRICE)} per person`}
+        />
+      </div>
+
+      <div className="summary">
+        <div className="summary__row">
+          <span>{booking.partySize} × {formatRupees(SADHYA_PRICE)}</span>
+          <span className="amount">{formatRupees(total)}</span>
+        </div>
+        <div className="summary__row is-total">
+          <span>Total</span>
+          <span className="amount">{formatRupees(total)}</span>
+        </div>
+        <p className="summary__note">Prepaid — this holds your table for the slot.</p>
+      </div>
+
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={handleContinue}
+        disabled={!booking.timeSlot}
+      >
+        Continue
+      </button>
+    </div>
+  );
+}
