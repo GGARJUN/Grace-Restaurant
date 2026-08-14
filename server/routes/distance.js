@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { OUTLETS } from "./outlets.js";
+import { nominatimFetch } from "../lib/nominatim.js";
 
 const router = Router();
 
@@ -112,17 +113,7 @@ async function distanceViaNominatim(outlet, address, postcode) {
   url.searchParams.set("limit", "1");
   url.searchParams.set("countrycodes", "in");
 
-  const response = await fetch(url, {
-    headers: {
-      // Nominatim's usage policy requires a descriptive User-Agent.
-      "User-Agent": "GraceRestaurant-OnamSadhya/1.0 (booking app; distance lookup)",
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Geocoding service returned HTTP ${response.status}`);
-  }
-
-  const results = await response.json();
+  const results = await nominatimFetch(url);
   if (!results.length) {
     throw new Error("Couldn't find that address. Please check the spelling or add more detail (area, landmark).");
   }

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { nominatimFetch } from "../lib/nominatim.js";
 
 const router = Router();
 
@@ -24,17 +25,7 @@ router.get("/", async (req, res) => {
     url.searchParams.set("limit", "5");
     url.searchParams.set("countrycodes", "in");
 
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "GraceRestaurant-OnamSadhya/1.0 (booking app; address autocomplete)",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Geocoding service returned HTTP ${response.status}`);
-    }
-
-    const results = await response.json();
+    const results = await nominatimFetch(url);
 
     const suggestions = results.map((r) => ({
       // Short, human-friendly label for the dropdown row (like Google's
