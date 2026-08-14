@@ -1,13 +1,16 @@
 import { Router } from "express";
-import { nominatimFetch } from "../lib/nominatim.js";
+import { photonAutocomplete } from "../lib/photon.js";
 
 const router = Router();
 
 // GET /api/address-autocomplete?q=grace res
 // Returns up to 5 nearby-matching place suggestions as the user types,
-// like the Google Maps search box. Uses the same free OpenStreetMap
-// Nominatim service as the distance calculator (server/routes/distance.js)
-// — no API key required.
+// like the Google Maps search box. Uses Photon (server/lib/photon.js),
+// a free OpenStreetMap-based geocoder built for autocomplete/typeahead
+// traffic — no API key required. (The distance calculator in
+// server/routes/distance.js uses Nominatim instead, since a one-off
+// per-order lookup is exactly the low-frequency traffic Nominatim's
+// stricter per-IP policy is fine with.)
 router.get("/", async (req, res) => {
   const query = (req.query.q || "").trim();
 
@@ -18,25 +21,7 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const url = new URL("https://nominatim.openstreetmap.org/search");
-    url.searchParams.set("q", query);
-    url.searchParams.set("format", "jsonv2");
-    url.searchParams.set("addressdetails", "1");
-    url.searchParams.set("limit", "5");
-    url.searchParams.set("countrycodes", "in");
-
-    const results = await nominatimFetch(url);
-
-    const suggestions = results.map((r) => ({
-      // Short, human-friendly label for the dropdown row (like Google's
-      // bold place name + grey secondary line).
-      label: shortLabel(r),
-      full_address: r.display_name,
-      lat: parseFloat(r.lat),
-      lon: parseFloat(r.lon),
-      postcode: r.address?.postcode || "",
-    }));
-
+    const suggestions = await photonAutocomplete(query, 5);
     res.json({ suggestions });
   } catch (err) {
     console.error("Address autocomplete failed:", err.message);
@@ -45,19 +30,5 @@ router.get("/", async (req, res) => {
     res.json({ suggestions: [] });
   }
 });
-
-// Builds a "Place name — area, city" style short label from Nominatim's
-// address breakdown, similar to how Google Maps trims long addresses in
-// its autocomplete dropdown.
-function shortLabel(result) {
-  const a = result.address || {};
-  const primary =
-    a.amenity || a.shop || a.building || a.road || result.display_name.split(",")[0];
-  const secondary = [a.suburb || a.neighbourhood, a.city || a.town || a.village, a.state]
-    .filter(Boolean)
-    .slice(0, 2)
-    .join(", ");
-  return secondary ? `${primary} — ${secondary}` : primary;
-}
 
 export default router;
