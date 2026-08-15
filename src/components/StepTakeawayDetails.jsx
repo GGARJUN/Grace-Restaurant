@@ -1,11 +1,12 @@
 import { useBooking } from "../context/BookingContext";
 import QuantityStepper from "./QuantityStepper";
-import { PICKUP_WINDOWS } from "../data/outlets";
-import { SADHYA_PRICE, takeawayTotal, formatRupees } from "../lib/pricing";
+import { PICKUP_WINDOWS, priceForSelection } from "../data/outlets";
+import { takeawayTotal, formatRupees } from "../lib/pricing";
 
 export default function StepTakeawayDetails() {
   const { booking, update, goNext, goBack } = useBooking();
-  const total = takeawayTotal(booking.takeawayQuantity);
+  const unitPrice = priceForSelection(booking.date, "takeaway");
+  const total = takeawayTotal(booking.takeawayQuantity, unitPrice);
 
   function handleContinue() {
     update({ totalAmount: total });
@@ -26,7 +27,7 @@ export default function StepTakeawayDetails() {
         <QuantityStepper
           value={booking.takeawayQuantity}
           onChange={(v) => update({ takeawayQuantity: v })}
-          unitLabel={`${formatRupees(SADHYA_PRICE)} each`}
+          unitLabel={`${formatRupees(unitPrice)} each`}
         />
       </div>
 
@@ -47,7 +48,7 @@ export default function StepTakeawayDetails() {
 
       <div className="summary">
         <div className="summary__row">
-          <span>{booking.takeawayQuantity} × {formatRupees(SADHYA_PRICE)}</span>
+          <span>{booking.takeawayQuantity} × {formatRupees(unitPrice)}</span>
           <span className="amount">{formatRupees(total)}</span>
         </div>
         <div className="summary__row is-total">

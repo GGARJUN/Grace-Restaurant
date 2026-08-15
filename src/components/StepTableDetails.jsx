@@ -1,11 +1,13 @@
 import { useBooking } from "../context/BookingContext";
 import QuantityStepper from "./QuantityStepper";
 import { TIME_SLOTS } from "../data/outlets";
-import { SADHYA_PRICE, MAX_TABLE_PARTY_SIZE, tableTotal, formatRupees } from "../lib/pricing";
+import { priceForSelection } from "../data/outlets";
+import { MAX_TABLE_PARTY_SIZE, tableTotal, formatRupees } from "../lib/pricing";
 
 export default function StepTableDetails() {
   const { booking, update, goNext, goBack } = useBooking();
-  const total = tableTotal(booking.partySize);
+  const unitPrice = priceForSelection(booking.date, "table");
+  const total = tableTotal(booking.partySize, unitPrice);
 
   function handleContinue() {
     update({ totalAmount: total });
@@ -42,13 +44,13 @@ export default function StepTableDetails() {
           value={booking.partySize}
           onChange={(v) => update({ partySize: v })}
           max={MAX_TABLE_PARTY_SIZE}
-          unitLabel={`${formatRupees(SADHYA_PRICE)} per person`}
+          unitLabel={`${formatRupees(unitPrice)} per person`}
         />
       </div>
 
       <div className="summary">
         <div className="summary__row">
-          <span>{booking.partySize} × {formatRupees(SADHYA_PRICE)}</span>
+          <span>{booking.partySize} × {formatRupees(unitPrice)}</span>
           <span className="amount">{formatRupees(total)}</span>
         </div>
         <div className="summary__row is-total">

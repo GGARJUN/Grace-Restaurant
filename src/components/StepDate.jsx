@@ -1,5 +1,6 @@
 import { useBooking } from "../context/BookingContext";
-import { EVENT_DATES } from "../data/outlets";
+import { EVENT_DATES, EVENT_CONFIG } from "../data/outlets";
+import { formatRupees } from "../lib/pricing";
 
 export default function StepDate() {
   const { booking, update, goNext } = useBooking();
@@ -15,22 +16,29 @@ export default function StepDate() {
         When would you like your Sadhya?
       </h2>
       <p className="field__hint" style={{ marginBottom: 18 }}>
-        Onam Sadhya booking is open for three dates only.
+        Onam Sadhya booking is open for two dates only.
       </p>
       <div className="choice-grid">
-        {EVENT_DATES.map((d) => (
-          <button
-            key={d.id}
-            className={`choice-card ${booking.date === d.id ? "is-selected" : ""}`}
-            onClick={() => choose(d.id)}
-          >
-            <div>
-              <div className="choice-card__title">{d.label}</div>
-              <div className="choice-card__meta">Onam Sadhya, all outlets</div>
-            </div>
-            <span className="choice-card__glyph" aria-hidden>🌼</span>
-          </button>
-        ))}
+        {EVENT_DATES.map((d) => {
+          const p = EVENT_CONFIG[d.id]?.prices;
+          return (
+            <button
+              key={d.id}
+              className={`choice-card ${booking.date === d.id ? "is-selected" : ""}`}
+              onClick={() => choose(d.id)}
+            >
+              <div>
+                <div className="choice-card__title">{d.label}</div>
+                <div className="choice-card__meta">
+                  {p
+                    ? `Dine in ${formatRupees(p.table)} · Takeaway ${formatRupees(p.takeaway)} · Delivery ${formatRupees(p.parcel)}+`
+                    : "Onam Sadhya, all outlets"}
+                </div>
+              </div>
+              <span className="choice-card__glyph" aria-hidden>🌼</span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );

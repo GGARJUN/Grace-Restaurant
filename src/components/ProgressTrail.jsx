@@ -1,6 +1,6 @@
 import { useBooking } from "../context/BookingContext";
 
-const LABELS = ["Date", "Outlet", "Order", "Details", "Your info"];
+const LABELS = ["Date", "Order", "Outlet", "Details", "Your info"];
 
 export default function ProgressTrail() {
   const { stepIndex, totalSteps } = useBooking();

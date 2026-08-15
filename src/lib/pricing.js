@@ -1,5 +1,8 @@
 // Pricing rules from the web app spec, §3.
-export const SADHYA_PRICE = 999;
+// NOTE: the per-Sadhya rate is no longer a single fixed number — it varies
+// by event date and order type (see EVENT_CONFIG in ../data/outlets.js).
+// Use priceForSelection(date, orderType) to look it up, then pass that
+// unit price into the *Total() helpers below.
 export const MAX_DELIVERY_KM = 10;
 export const MAX_TABLE_PARTY_SIZE = 35;
 export const TAKEAWAY_WINDOW_CAP = 15;
@@ -26,15 +29,15 @@ export function formatRupees(amount) {
   return `₹${amount.toLocaleString("en-IN")}`;
 }
 
-export function parcelTotal(quantity, deliveryCharge) {
-  const itemTotal = quantity * SADHYA_PRICE;
+export function parcelTotal(quantity, unitPrice, deliveryCharge) {
+  const itemTotal = quantity * unitPrice;
   return itemTotal + (deliveryCharge || 0);
 }
 
-export function tableTotal(partySize) {
-  return partySize * SADHYA_PRICE;
+export function tableTotal(partySize, unitPrice) {
+  return partySize * unitPrice;
 }
 
-export function takeawayTotal(quantity) {
-  return quantity * SADHYA_PRICE;
+export function takeawayTotal(quantity, unitPrice) {
+  return quantity * unitPrice;
 }

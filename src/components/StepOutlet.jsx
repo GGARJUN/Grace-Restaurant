@@ -1,9 +1,16 @@
 import { useBooking } from "../context/BookingContext";
-import { OUTLETS, EVENT_DATES } from "../data/outlets";
+import { EVENT_DATES, outletsForSelection } from "../data/outlets";
+
+const TYPE_VENUE_LABEL = {
+  parcel: "Delivery from",
+  table: "Dine in venue",
+  takeaway: "Takeaway venue",
+};
 
 export default function StepOutlet() {
   const { booking, update, goNext, goBack } = useBooking();
   const dateLabel = EVENT_DATES.find((d) => d.id === booking.date)?.label;
+  const venues = outletsForSelection(booking.date, booking.orderType);
 
   function choose(outletId) {
     update({ outletId });
@@ -16,13 +23,13 @@ export default function StepOutlet() {
         <button className="btn-ghost" onClick={goBack}>← Back</button>
       </div>
       <h2 className="choice-card__title" style={{ fontSize: 20, marginBottom: 4 }}>
-        Which outlet, for {dateLabel}?
+        {TYPE_VENUE_LABEL[booking.orderType] || "Which outlet"}, for {dateLabel}?
       </h2>
       <p className="field__hint" style={{ marginBottom: 18 }}>
         Same Sadhya, same menu at every outlet.
       </p>
       <div className="choice-grid">
-        {OUTLETS.map((o) => (
+        {venues.map((o) => (
           <button
             key={o.id}
             className={`choice-card ${booking.outletId === o.id ? "is-selected" : ""}`}

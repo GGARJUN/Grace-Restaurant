@@ -3,8 +3,8 @@ import { useBooking } from "../context/BookingContext";
 import QuantityStepper from "./QuantityStepper";
 import AddressAutocomplete from "./AddressAutocomplete";
 import { calculateDistance } from "../lib/api";
+import { priceForSelection } from "../data/outlets";
 import {
-  SADHYA_PRICE,
   MAX_DELIVERY_KM,
   deliveryChargeForDistance,
   deliverySlabLabel,
@@ -17,9 +17,10 @@ export default function StepParcelDetails() {
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState(null);
 
+  const unitPrice = priceForSelection(booking.date, "parcel");
   const charge = deliveryChargeForDistance(booking.distanceKm);
   const outOfRange = booking.distanceKm != null && booking.distanceKm > MAX_DELIVERY_KM;
-  const total = charge != null ? parcelTotal(booking.quantity, charge) : null;
+  const total = charge != null ? parcelTotal(booking.quantity, unitPrice, charge) : null;
 
   async function handleCheckDistance() {
     if (!booking.address.trim()) {
@@ -69,7 +70,7 @@ export default function StepParcelDetails() {
         <QuantityStepper
           value={booking.quantity}
           onChange={(v) => update({ quantity: v })}
-          unitLabel={`${formatRupees(SADHYA_PRICE)} each`}
+          unitLabel={`${formatRupees(unitPrice)} each`}
         />
       </div>
 
@@ -131,7 +132,7 @@ export default function StepParcelDetails() {
               </div>
               <div className="summary__row">
                 <span>Sadhya × {booking.quantity}</span>
-                <span className="amount">{formatRupees(booking.quantity * SADHYA_PRICE)}</span>
+                <span className="amount">{formatRupees(booking.quantity * unitPrice)}</span>
               </div>
               <div className="summary__row">
                 <span>Delivery charge</span>

@@ -1,31 +1,37 @@
 import { useBooking } from "../context/BookingContext";
-
-const TYPES = [
-  {
-    id: "parcel",
-    glyph: "🛵",
-    title: "Parcel",
-    meta: "Delivered to your home — ₹999 + delivery",
-  },
-  {
-    id: "table",
-    glyph: "🍽️",
-    title: "Table",
-    meta: "Dine in at the restaurant — ₹999 per person",
-  },
-  {
-    id: "takeaway",
-    glyph: "🥡",
-    title: "Takeaway",
-    meta: "Pick up from the outlet — ₹999",
-  },
-];
+import { priceForSelection } from "../data/outlets";
+import { formatRupees } from "../lib/pricing";
 
 export default function StepType() {
   const { booking, update, goNext, goBack } = useBooking();
 
+  const parcelPrice = priceForSelection(booking.date, "parcel");
+  const tablePrice = priceForSelection(booking.date, "table");
+  const takeawayPrice = priceForSelection(booking.date, "takeaway");
+
+  const TYPES = [
+    {
+      id: "parcel",
+      glyph: "🛵",
+      title: "Parcel",
+      meta: `Delivered to your home — ${formatRupees(parcelPrice)} + delivery`,
+    },
+    {
+      id: "table",
+      glyph: "🍽️",
+      title: "Table",
+      meta: `Dine in at the restaurant — ${formatRupees(tablePrice)} per person`,
+    },
+    {
+      id: "takeaway",
+      glyph: "🥡",
+      title: "Takeaway",
+      meta: `Pick up from the outlet — ${formatRupees(takeawayPrice)}`,
+    },
+  ];
+
   function choose(orderType) {
-    update({ orderType });
+    update({ orderType, outletId: null }); // outlet list depends on order type — clear any stale pick
     goNext();
   }
 
@@ -38,7 +44,8 @@ export default function StepType() {
         What would you like?
       </h2>
       <p className="field__hint" style={{ marginBottom: 18 }}>
-        One Sadhya is ₹999, however you take it.
+        Rates for this date — dine in {formatRupees(tablePrice)}, takeaway {formatRupees(takeawayPrice)},
+        delivery {formatRupees(parcelPrice)} + delivery charges.
       </p>
       <div className="choice-grid">
         {TYPES.map((t) => (

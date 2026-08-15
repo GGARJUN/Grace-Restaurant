@@ -2,15 +2,15 @@ import { createContext, useContext, useMemo, useState } from "react";
 
 const STEPS = [
   "date",
-  "outlet",
   "type",
+  "outlet",
   "details",
   "customer",
   "confirmation",
 ];
 
 const initialBooking = {
-  date: null,        // e.g. "2026-08-24"
+  date: null,        // e.g. "2026-08-25"
   outletId: null,
   orderType: null,   // "parcel" | "table" | "takeaway"
 
