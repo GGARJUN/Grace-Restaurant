@@ -1,27 +1,27 @@
 import { Router } from "express";
-import { photonAutocomplete } from "../lib/photon.js";
+import { autocomplete } from "../lib/googlePlaces.js";
 
 const router = Router();
 
-// GET /api/address-autocomplete?q=grace res
+// GET /api/address-autocomplete?q=grace res&session=<uuid>
 // Returns up to 5 nearby-matching place suggestions as the user types,
-// like the Google Maps search box. Uses Photon (server/lib/photon.js),
-// a free OpenStreetMap-based geocoder built for autocomplete/typeahead
-// traffic — no API key required. (The distance calculator in
-// server/routes/distance.js uses Nominatim instead, since a one-off
-// per-order lookup is exactly the low-frequency traffic Nominatim's
-// stricter per-IP policy is fine with.)
+// exactly like the Google Maps search box — because it IS the same
+// underlying data (Google Places API). `session` should be a random ID
+// generated once per address field (see src/lib/api.js) and reused for
+// every keystroke + the final place-details call, so Google bills the
+// whole search as one session instead of charging per request.
 router.get("/", async (req, res) => {
   const query = (req.query.q || "").trim();
+  const sessionToken = req.query.session || undefined;
 
-  // Don't hit the geocoder for very short input — avoids noisy/irrelevant
-  // results and needless API calls while the user is still typing.
+  // Don't hit the API for very short input — avoids noisy/irrelevant
+  // results and needless (billable) calls while the user is still typing.
   if (query.length < 3) {
     return res.json({ suggestions: [] });
   }
 
   try {
-    const suggestions = await photonAutocomplete(query, 5);
+    const suggestions = await autocomplete(query, { limit: 5, sessionToken });
     res.json({ suggestions });
   } catch (err) {
     console.error("Address autocomplete failed:", err.message);

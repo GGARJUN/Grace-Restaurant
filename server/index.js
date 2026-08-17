@@ -11,6 +11,7 @@ import cors from "cors";
 import outletsRouter from "./routes/outlets.js";
 import distanceRouter from "./routes/distance.js";
 import autocompleteRouter from "./routes/autocomplete.js";
+import placeDetailsRouter from "./routes/place-details.js";
 import ordersRouter from "./routes/orders.js";
 import paymentRouter from "./routes/payment.js";
 
@@ -30,6 +31,7 @@ app.use(
 app.use("/api/outlets", outletsRouter);
 app.use("/api/calculate-distance", distanceRouter);
 app.use("/api/address-autocomplete", autocompleteRouter);
+app.use("/api/place-details", placeDetailsRouter);
 app.use("/api/orders", ordersRouter);
 app.use("/api/payment", paymentRouter);
 
