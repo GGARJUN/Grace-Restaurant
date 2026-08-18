@@ -30,9 +30,7 @@ export default function StepDate() {
               <div>
                 <div className="choice-card__title">{d.label}</div>
                 <div className="choice-card__meta">
-                  {p
-                    ? `Dine in ${formatRupees(p.table)} · Takeaway ${formatRupees(p.takeaway)} · Delivery ${formatRupees(p.parcel)}+`
-                    : "Onam Sadhya, all outlets"}
+                Onam Sadhya, all outlets
                 </div>
               </div>
               <span className="choice-card__glyph" aria-hidden>🌼</span>
