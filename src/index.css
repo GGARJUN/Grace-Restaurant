@@ -231,7 +231,11 @@ button, input, select { font-family: inherit; }
 
 .field__textarea { resize: vertical; min-height: 64px; }
 
-/* ---------- Address autocomplete (Google Maps-style dropdown) ---------- */
+/* ---------- Address autocomplete (Google Maps JS API widget) ----------
+   Google renders its own dropdown as a ".pac-container" appended to
+   <body> (not inside our component), so we theme it globally here rather
+   than scoping it under .address-autocomplete. It only appears while the
+   widget is active, so this is safe to leave global. */
 .address-autocomplete {
   position: relative;
 }
@@ -256,64 +260,38 @@ button, input, select { font-family: inherit; }
   to { transform: rotate(360deg); }
 }
 
-.address-autocomplete__dropdown {
-  position: absolute;
-  z-index: 30;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  background: var(--cream);
+.address-autocomplete__error {
+  font-size: 12px;
+  color: var(--maroon);
+  margin-top: 6px;
+}
+
+.pac-container {
+  font-family: inherit;
   border: 1.5px solid var(--cream-deep);
   border-radius: var(--radius-control);
   box-shadow: var(--shadow-lift);
-  list-style: none;
-  margin: 0;
-  padding: 6px;
-  max-height: 260px;
-  overflow-y: auto;
+  margin-top: 6px;
 }
 
-.address-autocomplete__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 8px;
+.pac-item {
+  padding: 8px 10px;
+  font-size: 14px;
+  color: var(--ink);
   cursor: pointer;
 }
 
-.address-autocomplete__item:hover,
-.address-autocomplete__item.is-active {
+.pac-item:hover {
   background: var(--cream-deep);
 }
 
-.address-autocomplete__pin {
-  font-size: 15px;
-  line-height: 1.4;
-  flex-shrink: 0;
-}
-
-.address-autocomplete__text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.address-autocomplete__label {
+.pac-item-query {
   font-size: 14px;
-  font-weight: 600;
   color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.address-autocomplete__sub {
-  font-size: 12px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.pac-matched {
+  font-weight: 600;
 }
 
 .stepper {

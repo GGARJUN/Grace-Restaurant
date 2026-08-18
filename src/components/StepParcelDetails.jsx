@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useBooking } from "../context/BookingContext";
 import QuantityStepper from "./QuantityStepper";
 import AddressAutocomplete from "./AddressAutocomplete";
-import { calculateDistance } from "../lib/api";
+import { calculateDistanceClientSide } from "../lib/distance";
 import { priceForSelection } from "../data/outlets";
 import {
   MAX_DELIVERY_KM,
@@ -30,7 +30,7 @@ export default function StepParcelDetails() {
     setError(null);
     setChecking(true);
     try {
-      const res = await calculateDistance({
+      const res = await calculateDistanceClientSide({
         outletId: booking.outletId,
         address: booking.address,
         postcode: booking.postcode,
@@ -39,7 +39,7 @@ export default function StepParcelDetails() {
       });
       update({ distanceKm: res.distance_km });
     } catch (e) {
-      setError("Couldn't calculate distance. Please check the address and try again.");
+      setError(e.message || "Couldn't calculate distance. Please check the address and try again.");
     } finally {
       setChecking(false);
     }
