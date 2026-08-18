@@ -2,7 +2,7 @@
 // once, no matter how many components ask for it — safe to call from
 // multiple places, including React StrictMode's double-invoke in dev.
 //
-// Requires VITE_GOOGLE_MAPS_API_KEY to be set in the frontend .env file.
+// Requires VITE_GOOGLE_MAPS_API_KEYs to be set in the frontend .env file.
 // Unlike a backend key, this one IS visible in the browser — that's normal
 // for the Maps JavaScript API, but you MUST lock it down in Google Cloud
 // Console → Credentials → your key → Application restrictions →
