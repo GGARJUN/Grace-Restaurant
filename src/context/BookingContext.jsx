@@ -24,12 +24,10 @@ const initialBooking = {
   deliveryCharge: null,
 
   // table
-  timeSlot: null,
   partySize: 1,
 
   // takeaway
   takeawayQuantity: 1,
-  pickupWindow: null,
 
   // customer
   name: "",

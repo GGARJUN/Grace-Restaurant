@@ -4,14 +4,29 @@ import { nominatimFetch } from "../lib/nominatim.js";
 
 const router = Router();
 
-const MAX_DELIVERY_KM = 10;
+const MAX_DELIVERY_KM = 100;
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+
+// Mirrors src/lib/pricing.js — ₹100 for the first 3 km, then +₹30 for every
+// further 3 km bracket. e.g. up to 3 km → ₹100, 4–6 km → ₹130, 7–9 km →
+// ₹160, and so on up to MAX_DELIVERY_KM.
+const DELIVERY_BASE_CHARGE = 100;
+const DELIVERY_STEP_CHARGE = 30;
+const DELIVERY_STEP_KM = 3;
 
 function deliveryChargeForDistance(km) {
   if (km > MAX_DELIVERY_KM) return null;
-  if (km <= 2) return 200;
-  if (km <= 5) return 400;
-  return 600;
+  const bracket = Math.max(1, Math.ceil(km / DELIVERY_STEP_KM));
+  return DELIVERY_BASE_CHARGE + DELIVERY_STEP_CHARGE * (bracket - 1);
+}
+
+function deliverySlabLabel(km) {
+  if (km > MAX_DELIVERY_KM) return "beyond-range";
+  const bracket = Math.max(1, Math.ceil(km / DELIVERY_STEP_KM));
+  if (bracket === 1) return `up-to-${DELIVERY_STEP_KM}km`;
+  const lo = (bracket - 1) * DELIVERY_STEP_KM + 1;
+  const hi = bracket * DELIVERY_STEP_KM;
+  return `${lo}-${hi}km`;
 }
 
 // POST /api/calculate-distance
@@ -64,7 +79,7 @@ router.post("/", async (req, res) => {
 
   res.json({
     distance_km: distanceKm,
-    delivery_slab: distanceKm <= 2 ? "0-2 km" : distanceKm <= 5 ? "2-5 km" : "6-10 km",
+    delivery_slab: deliverySlabLabel(distanceKm),
     delivery_charge: charge,
     deliverable: true,
   });

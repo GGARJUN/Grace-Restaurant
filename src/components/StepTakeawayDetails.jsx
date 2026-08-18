@@ -1,6 +1,6 @@
 import { useBooking } from "../context/BookingContext";
 import QuantityStepper from "./QuantityStepper";
-import { PICKUP_WINDOWS, priceForSelection } from "../data/outlets";
+import { priceForSelection } from "../data/outlets";
 import { takeawayTotal, formatRupees } from "../lib/pricing";
 
 export default function StepTakeawayDetails() {
@@ -31,21 +31,6 @@ export default function StepTakeawayDetails() {
         />
       </div>
 
-      <div className="field">
-        <label className="field__label">Pickup window</label>
-        <select
-          className="field__select"
-          value={booking.pickupWindow || ""}
-          onChange={(e) => update({ pickupWindow: e.target.value })}
-        >
-          <option value="" disabled>Select a 30-minute window</option>
-          {PICKUP_WINDOWS.map((w) => (
-            <option key={w} value={w}>{w}</option>
-          ))}
-        </select>
-        {/* TODO(backend): disable windows at TAKEAWAY_WINDOW_CAP for this date+outlet */}
-      </div>
-
       <div className="summary">
         <div className="summary__row">
           <span>{booking.takeawayQuantity} × {formatRupees(unitPrice)}</span>
@@ -62,7 +47,6 @@ export default function StepTakeawayDetails() {
         type="button"
         className="btn btn-primary"
         onClick={handleContinue}
-        disabled={!booking.pickupWindow}
       >
         Continue
       </button>

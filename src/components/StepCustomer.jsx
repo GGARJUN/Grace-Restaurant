@@ -51,7 +51,6 @@ export default function StepCustomer() {
         order_type: booking.orderType,
         quantity: booking.orderType === "parcel" ? booking.quantity : booking.takeawayQuantity,
         party_size: booking.orderType === "table" ? booking.partySize : undefined,
-        time_slot: booking.orderType === "table" ? booking.timeSlot : booking.pickupWindow,
         delivery_address: booking.orderType === "parcel" ? booking.address : undefined,
         distance_km: booking.orderType === "parcel" ? booking.distanceKm : undefined,
         total_amount: booking.totalAmount,

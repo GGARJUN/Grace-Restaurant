@@ -1,6 +1,5 @@
 import { useBooking } from "../context/BookingContext";
 import QuantityStepper from "./QuantityStepper";
-import { TIME_SLOTS } from "../data/outlets";
 import { priceForSelection } from "../data/outlets";
 import { MAX_TABLE_PARTY_SIZE, tableTotal, formatRupees } from "../lib/pricing";
 
@@ -22,21 +21,6 @@ export default function StepTableDetails() {
       <h2 className="choice-card__title" style={{ fontSize: 20, marginBottom: 16 }}>
         Table — dine in
       </h2>
-
-      <div className="field">
-        <label className="field__label">Time slot</label>
-        <select
-          className="field__select"
-          value={booking.timeSlot || ""}
-          onChange={(e) => update({ timeSlot: e.target.value })}
-        >
-          <option value="" disabled>Select a time</option>
-          {TIME_SLOTS.map((slot) => (
-            <option key={slot} value={slot}>{slot}</option>
-          ))}
-        </select>
-        {/* TODO(backend): disable slots that have hit TABLE_SLOT_CAPACITY for this date+outlet */}
-      </div>
 
       <div className="field">
         <label className="field__label">Number of people</label>
@@ -64,7 +48,6 @@ export default function StepTableDetails() {
         type="button"
         className="btn btn-primary"
         onClick={handleContinue}
-        disabled={!booking.timeSlot}
       >
         Continue
       </button>

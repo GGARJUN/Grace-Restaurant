@@ -5,7 +5,7 @@ import { formatRupees } from "../lib/pricing";
 const TYPE_LABEL = { parcel: "Parcel delivery", table: "Table booking", takeaway: "Takeaway pickup" };
 const TYPE_NOTE = {
   parcel: "Grace's team will contact you to coordinate delivery.",
-  table: "See you at the restaurant for your slot.",
+  table: "See you at the restaurant on the day.",
   takeaway: "We'll message you on WhatsApp when it's ready for pickup.",
 };
 
@@ -17,8 +17,8 @@ export default function StepConfirmation() {
     booking.orderType === "parcel"
       ? `${booking.quantity} × Sadhya to ${booking.address}`
       : booking.orderType === "table"
-      ? `${booking.partySize} people · ${booking.timeSlot}`
-      : `${booking.takeawayQuantity} × Sadhya · ${booking.pickupWindow}`;
+      ? `${booking.partySize} people`
+      : `${booking.takeawayQuantity} × Sadhya`;
 
   return (
     <div className="step-card">
