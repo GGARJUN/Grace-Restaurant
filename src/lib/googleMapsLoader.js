@@ -15,7 +15,7 @@ let loadPromise = null;
 export function loadGoogleMaps() {
   if (loadPromise) return loadPromise;
 
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const apiKey = import.meta.env.VITEE_GOOGLE_MAPS_API_KEY;
 
   loadPromise = new Promise((resolve, reject) => {
     if (typeof window === "undefined") {
