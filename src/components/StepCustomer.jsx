@@ -6,6 +6,7 @@ import { createOrder } from "../lib/api";
 import { isRazorpayConfigured, openRazorpayCheckout } from "../lib/razorpay";
 
 const TYPE_LABEL = { parcel: "Parcel", table: "Table", takeaway: "Takeaway" };
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function StepCustomer() {
   const { booking, update, goNext, goBack } = useBooking();
@@ -17,10 +18,22 @@ export default function StepCustomer() {
 
   function validate() {
     if (!booking.name.trim()) return "Please enter your name.";
-    if (!/^\d{10}$/.test(booking.phone.replace(/\D/g, ""))) {
+    if (!/^\d{10}$/.test(booking.phone)) {
       return "Please enter a valid 10-digit phone number.";
     }
+    if (!booking.email.trim()) return "Please enter your email address.";
+    if (!EMAIL_PATTERN.test(booking.email.trim())) {
+      return "Please enter a valid email address.";
+    }
     return null;
+  }
+
+  // Keeps only digits as the user types, and caps length at 10 — so the
+  // field can never hold letters/symbols and validate() never needs to
+  // strip anything itself.
+  function handlePhoneChange(e) {
+    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
+    update({ phone: digitsOnly });
   }
 
   async function handlePay() {
@@ -44,7 +57,7 @@ export default function StepCustomer() {
         total_amount: booking.totalAmount,
         customer_name: booking.name,
         customer_phone: booking.phone,
-        customer_email: booking.email || undefined,
+        customer_email: booking.email,
       });
 
       if (isRazorpayConfigured()) {
@@ -81,34 +94,39 @@ export default function StepCustomer() {
       {error && <div className="error-banner">{error}</div>}
 
       <div className="field">
-        <label className="field__label">Name</label>
+        <label className="field__label">Name *</label>
         <input
           className="field__input"
           value={booking.name}
           onChange={(e) => update({ name: e.target.value })}
           placeholder="Your full name"
+          required
         />
       </div>
 
       <div className="field">
-        <label className="field__label">Phone number</label>
+        <label className="field__label">Phone number *</label>
         <input
           className="field__input"
           value={booking.phone}
-          onChange={(e) => update({ phone: e.target.value })}
+          onChange={handlePhoneChange}
           placeholder="10-digit mobile number"
           inputMode="numeric"
+          pattern="\d*"
+          maxLength={10}
+          required
         />
       </div>
 
       <div className="field">
-        <label className="field__label">Email (optional)</label>
+        <label className="field__label">Email *</label>
         <input
           className="field__input"
           value={booking.email}
           onChange={(e) => update({ email: e.target.value })}
           placeholder="you@example.com"
           type="email"
+          required
         />
       </div>
 

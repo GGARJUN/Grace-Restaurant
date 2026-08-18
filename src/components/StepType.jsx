@@ -44,8 +44,7 @@ export default function StepType() {
         What would you like?
       </h2>
       <p className="field__hint" style={{ marginBottom: 18 }}>
-        Rates for this date — dine in {formatRupees(tablePrice)}, takeaway {formatRupees(takeawayPrice)},
-        delivery {formatRupees(parcelPrice)} + delivery charges.
+      One Sadhya is ₹999, however you take it.
       </p>
       <div className="choice-grid">
         {TYPES.map((t) => (
